@@ -5,11 +5,19 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import colors from "../../data/styling/colors";
 import { useNavigation } from "@react-navigation/native";
 const Register = () => {
   const navigation = useNavigation();
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleRegister = () => {
+    console.log(userInfo);
+  };
   return (
     <View
       style={{
@@ -43,6 +51,8 @@ const Register = () => {
             marginTop: 20,
           }}
           placeholder="Email"
+          value={userInfo.email}
+          onChangeText={(text) => setUserInfo({ ...userInfo, email: text })}
         />
 
         <TextInput
@@ -53,6 +63,9 @@ const Register = () => {
             marginTop: 20,
           }}
           placeholder="Password"
+          secureTextEntry={true}
+          value={userInfo.password}
+          onChangeText={(text) => setUserInfo({ ...userInfo, password: text })}
         />
 
         <TouchableOpacity style={{ marginTop: 20 }}>
@@ -69,6 +82,7 @@ const Register = () => {
             marginTop: 20,
             alignItems: "center",
           }}
+          onPress={handleRegister}
         >
           <Text
             style={{
