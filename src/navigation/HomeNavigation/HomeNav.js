@@ -1,14 +1,24 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useContext } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import ROUTES from "../index";
 import Notes from "../../screens/Home/Notes";
 import colors from "../../data/styling/colors";
 import NoteDetails from "../../screens/Home/NoteDetails";
+import { deleteToken } from "../../api/token";
+import UserContext from "../../context/UserContext";
 const Stack = createNativeStackNavigator();
 
 const HomeNav = () => {
+  const [isAuthenticated, setIsAuthenticated] = useContext(UserContext);
+
+  const handleLogout = async () => {
+    console.log("Logout");
+    await deleteToken();
+    setIsAuthenticated(false);
+  };
+
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -26,6 +36,15 @@ const HomeNav = () => {
             fontSize: 20,
           },
           headerShadowVisible: false,
+          headerRight: () => (
+            <TouchableOpacity onPress={handleLogout}>
+              <Text
+                style={{ color: colors.white, marginRight: 10, fontSize: 16 }}
+              >
+                Logout
+              </Text>
+            </TouchableOpacity>
+          ),
         }}
       />
 
