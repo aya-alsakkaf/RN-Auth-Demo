@@ -5,10 +5,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import colors from "../../data/styling/colors";
 import { useNavigation } from "@react-navigation/native";
 import ROUTES from "../../navigation";
+import { login } from "../../api/auth";
+import { saveToken } from "../../api/token";
+import UserContext from "../../context/UserContext";
 const Login = () => {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({
@@ -16,9 +19,30 @@ const Login = () => {
     password: "",
   });
 
-  const handleLogin = () => {
-    console.log(userInfo);
+  const [isAuthenticated, setIsAuthenticated] = useContext(UserContext);
+
+  const handleLogin = async () => {
+    try {
+      console.log(userInfo);
+      const data = await login(userInfo);
+      console.log(data);
+      await saveToken(data.token);
+      setIsAuthenticated(true);
+    } catch (error) {
+      if (error.response) {
+        console.log("Error Response Status:", error.response.status);
+        console.log("Error Response Data:", error.response.data);
+      } else if (error.request) {
+        // If the request was made but no response was received
+        console.log("No response received:", error.request);
+      } else {
+        // If something else happened
+        console.log("Error in setting up request:", error.message);
+      }
+      console.error("Error object:", error);
+    }
   };
+
   return (
     <View
       style={{
