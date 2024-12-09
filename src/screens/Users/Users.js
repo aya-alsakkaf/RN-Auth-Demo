@@ -11,6 +11,8 @@ const Users = () => {
     queryKey: ["getallusers"],
     queryFn: getAllUsers,
   });
+
+  console.log(data ? data[0] : "");
   if (isLoading) return <Loading />;
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.primary }}>

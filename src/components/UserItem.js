@@ -20,7 +20,7 @@ const UserProfileCard = ({ image, email, name }) => {
     >
       <Image
         source={{
-          uri: `https://task-react-auth-backend.eapi.joincoded.com/${image}`,
+          uri: image,
         }}
         style={{
           width: 80,
