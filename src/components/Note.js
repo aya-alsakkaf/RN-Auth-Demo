@@ -4,7 +4,7 @@ import colors from "../data/styling/colors";
 import { useNavigation } from "@react-navigation/native";
 import ROUTES from "../navigation";
 
-const Note = () => {
+const Note = ({ note }) => {
   const navigation = useNavigation();
   return (
     <View
@@ -35,25 +35,24 @@ const Note = () => {
       >
         <Text
           style={{
-            color: colors.black,
+            color: colors.white,
             fontSize: 24,
             fontWeight: "bold",
             marginBottom: 8,
           }}
         >
-          Dawood
+          {note.title}
         </Text>
         <Text
           style={{
-            color: colors.black,
+            color: colors.white,
             fontSize: 16,
             fontWeight: "600",
             opacity: 0.8,
           }}
         >
-          Created By: Dawood
+          Created By: {note.user.name}
         </Text>
-
         <View
           style={{
             flexDirection: "row",
@@ -62,26 +61,26 @@ const Note = () => {
             marginBottom: 10,
           }}
         >
-          <View
-            style={{
-              backgroundColor: colors.tertiary,
-              padding: 12,
-              borderRadius: 10,
-              marginBottom: 5,
-            }}
-          >
-            <Text>Topic 1</Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: colors.tertiary,
-              padding: 12,
-              borderRadius: 10,
-              marginBottom: 5,
-            }}
-          >
-            <Text>Topic 2</Text>
-          </View>
+          {note.topic.map((topic) => {
+            return (
+              <View
+                style={{
+                  backgroundColor: colors.tertiary,
+                  padding: 12,
+                  borderRadius: 10,
+                  marginBottom: 5,
+                }}
+              >
+                <Text
+                  style={{
+                    color: colors.white,
+                  }}
+                >
+                  {topic}
+                </Text>
+              </View>
+            );
+          })}
         </View>
         <TouchableOpacity
           style={{
@@ -92,7 +91,11 @@ const Note = () => {
             alignItems: "center",
             marginBottom: 5,
           }}
-          onPress={() => navigation.navigate(ROUTES.HOME.NOTE_DETAILS)}
+          onPress={() =>
+            navigation.navigate(ROUTES.HOME.NOTE_DETAILS, {
+              noteID: note._id,
+            })
+          }
         >
           <Text
             style={{
