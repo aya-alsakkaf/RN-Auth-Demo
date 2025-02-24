@@ -1,13 +1,17 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useContext } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeNav from "../HomeNavigation/HomeNav";
 import colors from "../../data/styling/colors";
 import AddNote from "../../screens/Notes/AddNote";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Users from "../../screens/Users/Users";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { deleteToken } from "../../api/storage";
+import UserContext from "../../context/UserContext";
 const Tab = createBottomTabNavigator();
 const MainNavigation = () => {
+  const { isAuth, setIsAuth } = useContext(UserContext);
   return (
     <Tab.Navigator
       screenOptions={{
@@ -52,6 +56,19 @@ const MainNavigation = () => {
             color: colors.white,
             fontSize: 20,
             fontWeight: "bold",
+          },
+          headerRight: () => {
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  deleteToken();
+                  setIsAuth(false);
+                }}
+              >
+                {/* Delete the token, setIsAuth to false */}
+                <MaterialIcons name="logout" size={30} color="red" />
+              </TouchableOpacity>
+            );
           },
           tabBarIcon: ({ color, size }) => (
             <AntDesign name="user" size={24} color={color} />

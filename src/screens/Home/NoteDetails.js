@@ -1,8 +1,34 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import colors from "../../data/styling/colors";
+import { useQuery } from "@tanstack/react-query";
+import { getNote } from "../../api/notes";
 
-const NoteDetails = () => {
+const NoteDetails = ({ route }) => {
+  const { noteID } = route.params;
+  const { data, isLoading } = useQuery({
+    queryKey: ["getOneNote"],
+    queryFn: () => {
+      return getNote(noteID);
+    },
+  });
+
+  console.log(data);
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: colors.primary,
+        }}
+      >
+        <ActivityIndicator size="large" color="white" />
+      </View>
+    );
+  }
   return (
     <View
       style={{
@@ -35,7 +61,7 @@ const NoteDetails = () => {
             marginBottom: 15,
           }}
         >
-          Dawood
+          {data?.title}
         </Text>
 
         <View
@@ -46,24 +72,19 @@ const NoteDetails = () => {
             marginBottom: 20,
           }}
         >
-          <View
-            style={{
-              backgroundColor: colors.tertiary,
-              padding: 12,
-              borderRadius: 10,
-            }}
-          >
-            <Text style={{ color: colors.white }}>Topic 1</Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: colors.tertiary,
-              padding: 12,
-              borderRadius: 10,
-            }}
-          >
-            <Text style={{ color: colors.white }}>Topic 2</Text>
-          </View>
+          {data?.topic.map((topic) => {
+            return (
+              <View
+                style={{
+                  backgroundColor: colors.tertiary,
+                  padding: 12,
+                  borderRadius: 10,
+                }}
+              >
+                <Text style={{ color: colors.white }}>{topic}</Text>
+              </View>
+            );
+          })}
         </View>
 
         <Text
@@ -73,9 +94,7 @@ const NoteDetails = () => {
             lineHeight: 24,
           }}
         >
-          This is the note body text. It contains the main content of the note.
-          The styling matches the app's design system using the same color
-          scheme and similar styling patterns.
+          {data?.body}
         </Text>
       </View>
     </View>

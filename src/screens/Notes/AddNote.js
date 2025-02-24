@@ -9,12 +9,16 @@ import {
 import React, { useState } from "react";
 import colors from "../../data/styling/colors";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createNote } from "../../api/notes";
+import { useNavigation } from "@react-navigation/native";
 
 const AddNote = () => {
   const [title, setTitle] = useState("");
   const [topics, setTopics] = useState([""]);
   const [noteBody, setNoteBody] = useState("");
-
+  const navigation = useNavigation();
+  const queryClient = useQueryClient();
   const addTopic = () => {
     setTopics([...topics, ""]);
   };
@@ -24,6 +28,21 @@ const AddNote = () => {
     newTopics[index] = text;
     setTopics(newTopics);
   };
+
+  const { mutate } = useMutation({
+    mutationKey: ["createNote"],
+    mutationFn: () => createNote({ title, topic: topics, body: noteBody }),
+    onSuccess: () => {
+      alert("Added!");
+      navigation.navigate("Home");
+      queryClient.invalidateQueries({
+        queryKey: ["fetchAllNotes"],
+      });
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
 
   return (
     <SafeAreaView
@@ -172,6 +191,15 @@ const AddNote = () => {
               elevation: 7,
               borderWidth: 1,
               borderColor: "rgba(0,0,0,0.1)",
+            }}
+            onPress={() => {
+              console.log({
+                noteBody,
+                title,
+                topics,
+              });
+
+              mutate();
             }}
           >
             <Text

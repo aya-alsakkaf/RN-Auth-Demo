@@ -1,8 +1,40 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React from "react";
 import colors from "../../data/styling/colors";
 import Note from "../../components/Note";
+import { useQuery } from "@tanstack/react-query";
+import { getAllNotes } from "../../api/notes";
 const Notes = () => {
+  const { data, isLoading } = useQuery({
+    queryKey: ["fetchAllNotes"],
+    queryFn: () => getAllNotes(),
+  });
+
+  console.log(data);
+
+  const displayNotes = data?.map((singleNote) => {
+    return <Note note={singleNote} />;
+  });
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: colors.primary,
+        }}
+      >
+        <ActivityIndicator size="large" color="white" />
+      </View>
+    );
+  }
   return (
     <View
       style={{
@@ -20,12 +52,7 @@ const Notes = () => {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <Note />
-        <Note />
-        <Note />
-        <Note />
-        <Note />
-        <Note />
+        {displayNotes}
       </ScrollView>
     </View>
   );

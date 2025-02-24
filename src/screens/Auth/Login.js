@@ -5,12 +5,28 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useContext, useState } from "react";
 import colors from "../../data/styling/colors";
 import { useNavigation } from "@react-navigation/native";
 import ROUTES from "../../navigation";
+import { useMutation } from "@tanstack/react-query";
+import { login } from "../../api/auth";
+import UserContext from "../../context/UserContext";
 const Login = () => {
   const navigation = useNavigation();
+  const [userInfo, setUserInfo] = useState({});
+  const { isAuth, setIsAuth } = useContext(UserContext);
+  const { mutate } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: () => login(userInfo),
+    onSuccess: () => {
+      alert("Welcome");
+      setIsAuth(true);
+    },
+    onError: () => {
+      alert("Something went wrong");
+    },
+  });
   return (
     <View
       style={{
@@ -44,6 +60,9 @@ const Login = () => {
             marginTop: 20,
           }}
           placeholder="Email"
+          onChangeText={(value) => {
+            setUserInfo({ ...userInfo, email: value });
+          }}
         />
 
         <TextInput
@@ -54,6 +73,9 @@ const Login = () => {
             marginTop: 20,
           }}
           placeholder="Password"
+          onChangeText={(value) => {
+            setUserInfo({ ...userInfo, password: value });
+          }}
         />
 
         <TouchableOpacity
@@ -63,6 +85,9 @@ const Login = () => {
             borderRadius: 5,
             marginTop: 20,
             alignItems: "center",
+          }}
+          onPress={() => {
+            mutate();
           }}
         >
           <Text
